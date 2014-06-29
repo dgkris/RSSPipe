@@ -2,13 +2,12 @@ package com.dgkris.mediapipe.feeds;
 
 import com.dgkris.mediapipe.feeds.models.Feed;
 import com.dgkris.mediapipe.feeds.models.FeedItem;
-import com.dgkris.mediapipe.feeds.models.FeedListItem;
+import com.dgkris.mediapipe.feeds.models.FeedSource;
 import com.dgkris.mediapipe.feeds.models.FeedPage;
 import com.dgkris.mediapipe.feeds.parser.HTMLParser;
 import com.dgkris.mediapipe.feeds.parser.RSSFeedParser;
 import com.dgkris.mediapipe.feeds.types.FeedListener;
-import com.dgkris.mediapipe.feeds.types.SourceExtractor;
-import com.dgkris.mediapipe.utils.DateUtil;
+import com.dgkris.mediapipe.feeds.types.FeedSourceReader;
 import com.dgkris.mediapipe.utils.Utils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -24,16 +23,16 @@ import java.util.List;
 public class FeedExtractor extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(FeedExtractor.class);
-    private List<FeedListItem> feedListItems;
-    private SourceExtractor sourceExtractor;
+    private List<FeedSource> feedSources;
+    private FeedSourceReader feedSourceReader;
     private ArrayList<FeedListener> listeners = new ArrayList<FeedListener>();
     private boolean keepRunning = false;
     private boolean threadEnded = false;
     private int crawlingFrequency = 20000;
 
 
-    public FeedExtractor(SourceExtractor sourceExtractor, int crawlingFrequency) {
-        this.sourceExtractor = sourceExtractor;
+    public FeedExtractor(FeedSourceReader feedSourceReader, int crawlingFrequency) {
+        this.feedSourceReader = feedSourceReader;
         this.crawlingFrequency = crawlingFrequency;
         initialize();
     }
@@ -43,7 +42,7 @@ public class FeedExtractor extends Thread {
     }
 
     private void initialize() {
-        feedListItems = sourceExtractor.getSourceFeeds();
+        feedSources = feedSourceReader.getSourceFeeds();
     }
 
     @Override
@@ -69,9 +68,9 @@ public class FeedExtractor extends Thread {
         DateTime latestPubDateForFeed = null;
         DateTime pubDate = null;
         DateTime lastExtractedDateTime = null;
-        for (FeedListItem feedListItem : feedListItems) {
-            Feed feed = rssFeedParser.getFeedsFromUrl(feedListItem);
-            lastExtractedDateTime = sourceExtractor.getLastExtractedDateTimeForFeed(feed);
+        for (FeedSource feedSource : feedSources) {
+            Feed feed = rssFeedParser.getFeedsFromUrl(feedSource);
+            lastExtractedDateTime = feedSourceReader.getLastExtractedDateTimeForFeed(feed);
             for (FeedItem feedItem : feed.getFeedItems()) {
                 pubDate = Utils.convertToDateTime(feedItem.getPubDate());
                 if (pubDate.isAfter(lastExtractedDateTime)) {
@@ -83,7 +82,7 @@ public class FeedExtractor extends Thread {
                 }
             }
             if (latestPubDateForFeed != null) {
-                sourceExtractor.setLastExtractedDateTimeForFeed(feed,
+                feedSourceReader.setLastExtractedDateTimeForFeed(feed,
                         lastExtractedDateTime.toString(), latestPubDateForFeed.toString());
             }
         }

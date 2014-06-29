@@ -15,7 +15,7 @@ public class Feed {
     private final String copyright;
     private final String pubDate;
     private final List<FeedItem> feedItems = new ArrayList<FeedItem>();
-    private FeedListItem feedListItem;
+    private FeedSource feedSource;
 
     public Feed(String title, String link, String description, String language,
                 String copyright, String pubDate) {
@@ -55,12 +55,12 @@ public class Feed {
         return pubDate;
     }
 
-    public FeedListItem getFeedListItem() {
-        return feedListItem;
+    public FeedSource getFeedSource() {
+        return feedSource;
     }
 
-    public void setFeedListItem(FeedListItem feedListItem) {
-        this.feedListItem = feedListItem;
+    public void setFeedSource(FeedSource feedSource) {
+        this.feedSource = feedSource;
     }
 
     @Override

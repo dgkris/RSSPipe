@@ -13,15 +13,16 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Serializes the news feed items to write to HBase schema
  */
-public class FeedSerializer implements AsyncHbaseEventSerializer {
+public class RSSPipeSerializer implements AsyncHbaseEventSerializer {
 
-    private static final Logger logger = LoggerFactory.getLogger(FeedSerializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(RSSPipeSerializer.class);
     private final List<PutRequest> puts = new ArrayList<PutRequest>();
     private final List<AtomicIncrementRequest> incs = new ArrayList<AtomicIncrementRequest>();
     private final byte[] eventCountCol = "eventCount".getBytes();
@@ -29,11 +30,14 @@ public class FeedSerializer implements AsyncHbaseEventSerializer {
     private byte[] hTable;
     private byte[] colFamily;
     private Event currentEvent;
-    private byte[][] colNames;
+    private byte[][] columnMapEntry;
+    private boolean shouldHashRowKey = false;
+    private Field rowKeyField;
+
 
     @Override
     public void initialize(byte[] table, byte[] cf) {
-        logger.info("FeedSink initiated");
+        logger.info("RSSPipeSerializer initiated");
         this.hTable = table;
         this.colFamily = cf;
     }
@@ -48,13 +52,26 @@ public class FeedSerializer implements AsyncHbaseEventSerializer {
     public List<PutRequest> getActions() {
         // Split the event body and get the values for the columns
         String eventStr = new String(currentEvent.getBody());
-        FeedPage page = (FeedPage) gson.fromJson(eventStr, FeedPage.class);
-        logger.info("Received " + page.toString());
 
-        byte[] rowKey = getHashedRowKey(page);
+        FeedPage page = (FeedPage) gson.fromJson(eventStr, FeedPage.class);
+        page.setTimestampOfStorage(String.valueOf(new DateTime().getMillis()));
+
+        logger.info("Received " + page.toString());
+        byte[] rowKey = null;
+        try {
+            String fieldValue = (String) rowKeyField.get(page);
+            if (shouldHashRowKey) {
+                rowKey = getHashedRowKey(fieldValue);
+            } else {
+                rowKey = fieldValue.getBytes();
+            }
+        } catch (IllegalAccessException e) {
+            logger.info("Something went wrong in the serializer " + e.getMessage());
+        }
+
         String[] cols = {
                 page.getFeedItemTitle(), page.getFeedItemAuthor(),
-                page.getFeedItemLink(), page.getFeedItemGuid(),page.getFeedItemPubDate(),
+                page.getFeedItemLink(), page.getFeedItemGuid(), page.getFeedItemPubDate(),
                 page.getFeedItemDescription(), page.getBestGuessRelevantText(),
                 page.getFullText(), page.getFeedCopyRight(), page.getFeedDesc(), page.getFeedLanguage(),
                 page.getFeedLink(), page.getFeedTitle(), page.getFeedPubDate()
@@ -63,7 +80,7 @@ public class FeedSerializer implements AsyncHbaseEventSerializer {
         puts.clear();
         for (short i = 0; i < cols.length; i++) {
             PutRequest req = new PutRequest(hTable, rowKey, colFamily,
-                    colNames[i], cols[i] != null ? cols[i].getBytes() : "".getBytes());
+                    columnMapEntry[i], cols[i] != null ? cols[i].getBytes() : "".getBytes());
             puts.add(req);
         }
         return puts;
@@ -78,23 +95,32 @@ public class FeedSerializer implements AsyncHbaseEventSerializer {
 
     @Override
     public void cleanUp() {
-        logger.info("Cleanup of FeedSink");
+        logger.info("Cleanup of RSSPipeSerializer");
         hTable = null;
         colFamily = null;
         currentEvent = null;
-        colNames = null;
+        columnMapEntry = null;
     }
 
     @Override
     public void configure(Context context) {
-        String cols = new String(context.getString(MediaPipeConstants.COL_CONF_PARAM_NAME));
-        String[] columnNames = cols.split(MediaPipeConstants.COL_CONF_PARAM_DELIM);
-        short i = 0;
-        colNames = new byte[columnNames.length][];
-        for (String name : columnNames) {
-            logger.info("NAME :: " + name);
-            if (name != null)
-                colNames[i++] = (new String(name)).getBytes();
+        Class feedPageClass = FeedPage.class;
+        try {
+            rowKeyField = feedPageClass.getField(context.getString(RSSPipeConstants.ROW_KEY_PARAM_NAME));
+            shouldHashRowKey = context.getBoolean(RSSPipeConstants.SHOULD_HASH_ROW_KEY_PARAM_NAME);
+
+            String columnMapping = new String(context.getString(RSSPipeConstants.COL_CONF_PARAM_NAME));
+            String[] columnMappingUnits = columnMapping.split(RSSPipeConstants.COL_CONF_PARAM_DELIM);
+            short i = 0;
+            columnMapEntry = new byte[columnMappingUnits.length][];
+            for (String name : columnMappingUnits) {
+                logger.info("NAME :: " + name);
+                name.split(":");
+                if (name != null)
+                    columnMapEntry[i++] = (new String(name)).getBytes();
+            }
+        } catch (NoSuchFieldException e) {
+            logger.info("Error while fetching parameters for serializer");
         }
     }
 
@@ -103,9 +129,9 @@ public class FeedSerializer implements AsyncHbaseEventSerializer {
 
     }
 
-    private byte[] getHashedRowKey(FeedPage page) {
-        page.setTimestampOfStorage(Utils.getMD5HashForString(String.valueOf(new DateTime().getMillis())).toString());
-        return page.getTimestampOfStorage().getBytes();
+    private byte[] getHashedRowKey(String key) {
+        return Utils.getMD5HashForString(key);
     }
+
 
 }

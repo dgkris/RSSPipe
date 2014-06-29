@@ -3,10 +3,10 @@ package com.dgkris.mediapipe.feeds.models;
 import org.bson.types.ObjectId;
 
 /**
- * Represents one row of the mongo collection : FeedListItem
+ * Represents a single source entry for a feed
  * (id,feedurl,state,country,name, type)
  */
-public class FeedListItem {
+public class FeedSource {
 
     private ObjectId feedId;
     private String publisherName;
@@ -14,7 +14,7 @@ public class FeedListItem {
     private String state, country;
 
 
-    public FeedListItem() {
+    public FeedSource() {
 
     }
 

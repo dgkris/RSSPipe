@@ -16,7 +16,6 @@ public class FeedPage {
     private String feedCopyRight;
     private String feedPubDate;
 
-
     //FeedItem representations
     private String feedItemTitle;
     private String feedItemDescription;

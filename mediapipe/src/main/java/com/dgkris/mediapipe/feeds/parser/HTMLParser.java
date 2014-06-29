@@ -26,7 +26,7 @@ public class HTMLParser {
             HtmlFetcher fetcher = new HtmlFetcher();
             JResult res = fetcher.fetchAndExtract(url, 30000, true);
             setFeedItemInfo(feedPage, feedItem);
-            setFeedInfo(feedPage,feedItem.getParentFeed());
+            setFeedInfo(feedPage, feedItem.getParentFeed());
             feedPage.setBestGuessRelevantText(res.getText());
             feedPage.setDecodedPubTime(Utils.convertToDateTime(feedItem.getPubDate()).toString());
             feedPage.setFullText(html);

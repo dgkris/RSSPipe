@@ -2,7 +2,7 @@ package com.dgkris.mediapipe.feeds.parser;
 
 import com.dgkris.mediapipe.feeds.models.Feed;
 import com.dgkris.mediapipe.feeds.models.FeedItem;
-import com.dgkris.mediapipe.feeds.models.FeedListItem;
+import com.dgkris.mediapipe.feeds.models.FeedSource;
 import com.dgkris.mediapipe.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +37,9 @@ public class RSSFeedParser {
 
     }
 
-    public Feed getFeedsFromUrl(FeedListItem feedListItem) {
-        logger.info("Extracting rss feed items from feed url : {} initiated", feedListItem.getFeedUrl());
-        String feedUrl = feedListItem.getFeedUrl();
+    public Feed getFeedsFromUrl(FeedSource feedSource) {
+        logger.info("Extracting rss feed items from feed url : {} initiated", feedSource.getFeedUrl());
+        String feedUrl = feedSource.getFeedUrl();
         Feed feed = null;
         try {
             URL url = new URL(feedUrl);
@@ -72,7 +72,7 @@ public class RSSFeedParser {
                             feed = new Feed(title, link, description, language,
                                     copyright, pubdate);
 
-                            feed.setFeedListItem(feedListItem);
+                            feed.setFeedSource(feedSource);
                         }
                         event = eventReader.nextEvent();
                     } else if (localPart.equals(TITLE)) {
@@ -120,7 +120,7 @@ public class RSSFeedParser {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        logger.info("Extracting rss feed items from feed url : {} completed", feedListItem.getFeedUrl());
+        logger.info("Extracting rss feed items from feed url : {} completed", feedSource.getFeedUrl());
 
         return feed;
     }

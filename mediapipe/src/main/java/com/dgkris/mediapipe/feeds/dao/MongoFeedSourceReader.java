@@ -1,12 +1,10 @@
 package com.dgkris.mediapipe.feeds.dao;
 
 import com.dgkris.mediapipe.feeds.models.Feed;
-import com.dgkris.mediapipe.feeds.models.FeedListItem;
-import com.dgkris.mediapipe.feeds.types.SourceExtractor;
+import com.dgkris.mediapipe.feeds.models.FeedSource;
+import com.dgkris.mediapipe.feeds.types.FeedSourceReader;
 import com.dgkris.mediapipe.utils.Utils;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -18,20 +16,20 @@ import java.util.List;
 /**
  * Retrieves feeds list from mongo collection
  */
-public class MongoFeedListExtractor implements SourceExtractor {
+public class MongoFeedSourceReader implements FeedSourceReader {
 
-    private static final Logger logger = LoggerFactory.getLogger(MongoFeedListExtractor.class);
+    private static final Logger logger = LoggerFactory.getLogger(MongoFeedSourceReader.class);
 
     @Override
-    public List<FeedListItem> getSourceFeeds() {
+    public List<FeedSource> getSourceFeeds() {
         logger.info("Fetching feeds from Mongo::Started");
-        ArrayList<FeedListItem> feedItems = new ArrayList<FeedListItem>();
+        ArrayList<FeedSource> feedItems = new ArrayList<FeedSource>();
         MongoService mongoService = new MongoService();
         mongoService.openConnection("localhost", 27017, "MediapipeDB");
         BasicDBObject basicDBObject = new BasicDBObject();
         List<DBObject> feedSources = mongoService.fetchDocumentsFromCollection("FeedSource", basicDBObject);
         for (DBObject feedSource : feedSources) {
-            FeedListItem feedListItem = new FeedListItem();
+            FeedSource feedListItem = new FeedSource();
             feedListItem.setPublisherName((String) feedSource.get("publisherName"));
             feedListItem.setFeedUrl((String) feedSource.get("url"));
             feedListItem.setCountry((String) feedSource.get("country"));
@@ -48,11 +46,11 @@ public class MongoFeedListExtractor implements SourceExtractor {
         MongoService mongoService = new MongoService();
         mongoService.openConnection("localhost", 27017, "MediapipeDB");
         BasicDBObject basicDBObject = new BasicDBObject();
-        basicDBObject.put("publisherName", feed.getFeedListItem().getPublisherName());
+        basicDBObject.put("publisherName", feed.getFeedSource().getPublisherName());
         DBObject extractionStatus = mongoService.fetchDocumentsFromCollection("ExtractionStatus", basicDBObject).get(0);
         DateTime dateTime = Utils.convertToDateTime((String) extractionStatus.get("lastExtractedTs"));
         mongoService.closeConnection();
-        logger.info("Last extraction date for feed::{} => {}", feed.getFeedListItem().getPublisherName(), dateTime.toString());
+        logger.info("Last extraction date for feed::{} => {}", feed.getFeedSource().getPublisherName(), dateTime.toString());
         return dateTime;
     }
 
@@ -63,14 +61,14 @@ public class MongoFeedListExtractor implements SourceExtractor {
 
 
         BasicDBObject queryObject = new BasicDBObject();
-        queryObject.put("publisherName", feed.getFeedListItem().getPublisherName());
+        queryObject.put("publisherName", feed.getFeedSource().getPublisherName());
 
         BasicDBObject newDBObject = new BasicDBObject();
-        newDBObject.put("publisherName", feed.getFeedListItem().getPublisherName());
+        newDBObject.put("publisherName", feed.getFeedSource().getPublisherName());
         newDBObject.put("lastExtractedTs", newDateTime);
 
         mongoService.replaceDocumentInCollection("ExtractionStatus", queryObject, newDBObject);
-        logger.info("Updated last extraction date for feed::{} to {}", feed.getFeedListItem().getPublisherName(), newDateTime.toString());
+        logger.info("Updated last extraction date for feed::{} to {}", feed.getFeedSource().getPublisherName(), newDateTime.toString());
     }
 
 }
