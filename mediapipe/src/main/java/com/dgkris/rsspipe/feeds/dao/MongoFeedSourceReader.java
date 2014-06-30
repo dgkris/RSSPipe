@@ -1,9 +1,9 @@
-package com.dgkris.mediapipe.feeds.dao;
+package com.dgkris.rsspipe.feeds.dao;
 
-import com.dgkris.mediapipe.feeds.models.Feed;
-import com.dgkris.mediapipe.feeds.models.FeedSource;
-import com.dgkris.mediapipe.feeds.types.FeedSourceReader;
-import com.dgkris.mediapipe.utils.Utils;
+import com.dgkris.rsspipe.feeds.models.Feed;
+import com.dgkris.rsspipe.feeds.models.FeedSource;
+import com.dgkris.rsspipe.feeds.types.FeedSourceReader;
+import com.dgkris.rsspipe.utils.Utils;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.joda.time.DateTime;

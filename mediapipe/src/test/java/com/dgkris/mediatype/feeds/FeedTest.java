@@ -1,7 +1,7 @@
 package com.dgkris.mediatype.feeds;
 
-import com.dgkris.mediapipe.feeds.FeedExtractor;
-import com.dgkris.mediapipe.feeds.dao.MongoFeedSourceReader;
+import com.dgkris.rsspipe.feeds.FeedExtractor;
+import com.dgkris.rsspipe.feeds.dao.MongoFeedSourceReader;
 
 /**
  * A basic test for rss feed based module

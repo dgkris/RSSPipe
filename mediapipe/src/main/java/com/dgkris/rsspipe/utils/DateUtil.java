@@ -1,4 +1,4 @@
-package com.dgkris.mediapipe.utils;
+package com.dgkris.rsspipe.utils;
 
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;

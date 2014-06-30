@@ -1,4 +1,4 @@
-package com.dgkris.mediapipe.feeds.models;
+package com.dgkris.rsspipe.feeds.models;
 
 /**
  * Represents a single html page that appeared on the feed

@@ -1,4 +1,4 @@
-package com.dgkris.mediapipe.utils;
+package com.dgkris.rsspipe.utils;
 
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -55,6 +56,26 @@ public class Utils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Object getFieldValueInInstance(Object instance, Field field) {
+        try {
+            if (field != null) {
+                return field.get(instance);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Field getFieldByName(String fieldName, Class containerClass) {
+        try {
+            return containerClass.getField(fieldName);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

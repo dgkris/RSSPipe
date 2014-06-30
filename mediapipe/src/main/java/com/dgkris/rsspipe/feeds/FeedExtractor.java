@@ -1,14 +1,14 @@
-package com.dgkris.mediapipe.feeds;
+package com.dgkris.rsspipe.feeds;
 
-import com.dgkris.mediapipe.feeds.models.Feed;
-import com.dgkris.mediapipe.feeds.models.FeedItem;
-import com.dgkris.mediapipe.feeds.models.FeedSource;
-import com.dgkris.mediapipe.feeds.models.FeedPage;
-import com.dgkris.mediapipe.feeds.parser.HTMLParser;
-import com.dgkris.mediapipe.feeds.parser.RSSFeedParser;
-import com.dgkris.mediapipe.feeds.types.FeedListener;
-import com.dgkris.mediapipe.feeds.types.FeedSourceReader;
-import com.dgkris.mediapipe.utils.Utils;
+import com.dgkris.rsspipe.feeds.models.Feed;
+import com.dgkris.rsspipe.feeds.models.FeedItem;
+import com.dgkris.rsspipe.feeds.models.FeedSource;
+import com.dgkris.rsspipe.feeds.models.FeedPage;
+import com.dgkris.rsspipe.feeds.parser.HTMLParser;
+import com.dgkris.rsspipe.feeds.parser.RSSFeedParser;
+import com.dgkris.rsspipe.feeds.types.FeedListener;
+import com.dgkris.rsspipe.feeds.types.FeedSourceReader;
+import com.dgkris.rsspipe.utils.Utils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

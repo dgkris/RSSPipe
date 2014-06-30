@@ -6,8 +6,9 @@
 
 
     <groupId>com.dgkris</groupId>
-    <artifactId>mediapipe</artifactId>
+    <artifactId>rsspipe</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>RSSPipe</name>
 
     <!-- Dependencies for CDH4+Flume Pipe -->
     <dependencies>

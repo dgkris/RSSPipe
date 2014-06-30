@@ -1,4 +1,4 @@
-package com.dgkris.mediapipe.feeds.models;
+package com.dgkris.rsspipe.feeds.models;
 
 import java.util.ArrayList;
 import java.util.List;

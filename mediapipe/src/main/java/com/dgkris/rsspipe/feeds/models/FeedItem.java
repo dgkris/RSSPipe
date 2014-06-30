@@ -1,4 +1,4 @@
-package com.dgkris.mediapipe.feeds.models;
+package com.dgkris.rsspipe.feeds.models;
 
 /*
  * Represents one RSS message

@@ -1,7 +1,7 @@
-package com.dgkris.mediapipe.feeds.types;
+package com.dgkris.rsspipe.feeds.types;
 
-import com.dgkris.mediapipe.feeds.models.Feed;
-import com.dgkris.mediapipe.feeds.models.FeedSource;
+import com.dgkris.rsspipe.feeds.models.Feed;
+import com.dgkris.rsspipe.feeds.models.FeedSource;
 import org.joda.time.DateTime;
 
 import java.util.List;

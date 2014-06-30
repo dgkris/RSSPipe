@@ -1,4 +1,4 @@
-package com.dgkris.mediapipe.feeds.dao;
+package com.dgkris.rsspipe.feeds.dao;
 
 import com.mongodb.*;
 import com.mongodb.util.JSON;

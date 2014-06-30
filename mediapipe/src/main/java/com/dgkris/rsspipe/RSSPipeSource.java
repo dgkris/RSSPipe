@@ -1,9 +1,9 @@
-package com.dgkris.mediapipe;
+package com.dgkris.rsspipe;
 
-import com.dgkris.mediapipe.feeds.FeedExtractor;
-import com.dgkris.mediapipe.feeds.dao.MongoFeedSourceReader;
-import com.dgkris.mediapipe.feeds.models.FeedPage;
-import com.dgkris.mediapipe.feeds.types.FeedListener;
+import com.dgkris.rsspipe.feeds.FeedExtractor;
+import com.dgkris.rsspipe.feeds.dao.MongoFeedSourceReader;
+import com.dgkris.rsspipe.feeds.models.FeedPage;
+import com.dgkris.rsspipe.feeds.types.FeedListener;
 import com.google.gson.Gson;
 import org.apache.flume.Context;
 import org.apache.flume.Event;

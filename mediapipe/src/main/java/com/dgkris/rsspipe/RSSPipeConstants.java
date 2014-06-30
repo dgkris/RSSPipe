@@ -1,4 +1,4 @@
-package com.dgkris.mediapipe;
+package com.dgkris.rsspipe;
 
 /**
  * Constants to serve as config file keys
