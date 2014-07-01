@@ -1,5 +1,6 @@
 package com.dgkris.rsspipe.utils;
 
+import com.dgkris.rsspipe.feeds.models.FeedPage;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 
@@ -61,6 +62,7 @@ public class Utils {
     public static Object getFieldValueInInstance(Object instance, Field field) {
         try {
             if (field != null) {
+                field.setAccessible(true);
                 return field.get(instance);
             }
         } catch (IllegalAccessException e) {
@@ -71,11 +73,18 @@ public class Utils {
 
     public static Field getFieldByName(String fieldName, Class containerClass) {
         try {
-            return containerClass.getField(fieldName);
+            return containerClass.getDeclaredField(fieldName);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void main(String args[]) {
+        FeedPage page=new FeedPage();
+        page.setTimestampOfStorage("xyz");
+        System.out.println(Utils.getFieldValueInInstance(page, Utils.getFieldByName("timestampOfStorage",FeedPage.class)));
+
     }
 
 }
