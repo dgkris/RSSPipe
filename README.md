@@ -1,6 +1,6 @@
-MediaPipe (Beta)
+RSS Pipe (Beta)
 =========
-An RSS feed importer using apache flume. Tried and tested on CDH 4.6. 
+An RSS feed importer using Apache Flume that imports RSS feed elements filtered by date into HBase. Tried and tested on CDH 4.6. 
 
 
 **Adding new sources**
