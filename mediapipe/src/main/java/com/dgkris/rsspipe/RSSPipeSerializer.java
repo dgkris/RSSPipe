@@ -39,14 +39,14 @@ public class RSSPipeSerializer implements AsyncHbaseEventSerializer {
 
     @Override
     public void initialize(byte[] table, byte[] cf) {
-        logger.info("RSSPipeSerializer initiated");
+        logger.debug("RSSPipeSerializer initiated");
         this.hTable = table;
         this.colFamily = cf;
     }
 
     @Override
     public void setEvent(Event event) {
-        logger.info("Event received");
+        logger.debug("Event received");
         this.currentEvent = event;
     }
 
@@ -57,7 +57,7 @@ public class RSSPipeSerializer implements AsyncHbaseEventSerializer {
         FeedPage page = (FeedPage) gson.fromJson(eventStr, FeedPage.class);
         page.setTimestampOfStorage(String.valueOf(new DateTime().getMillis()));
 
-        logger.info("Received " + page.toString());
+        logger.debug("Received " + page.toString());
         byte[] rowKeyAsBytes = null;
 
         String rowkeyValue = (String) Utils.getFieldValueInInstance(page, rowKeyField);
@@ -90,7 +90,7 @@ public class RSSPipeSerializer implements AsyncHbaseEventSerializer {
 
     @Override
     public void cleanUp() {
-        logger.info("Cleanup of RSSPipeSerializer");
+        logger.debug("Cleanup of RSSPipeSerializer");
         hTable = null;
         colFamily = null;
         currentEvent = null;

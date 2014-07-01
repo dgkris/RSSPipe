@@ -2,8 +2,8 @@ package com.dgkris.rsspipe.feeds;
 
 import com.dgkris.rsspipe.feeds.models.Feed;
 import com.dgkris.rsspipe.feeds.models.FeedItem;
-import com.dgkris.rsspipe.feeds.models.FeedSource;
 import com.dgkris.rsspipe.feeds.models.FeedPage;
+import com.dgkris.rsspipe.feeds.models.FeedSource;
 import com.dgkris.rsspipe.feeds.parser.HTMLParser;
 import com.dgkris.rsspipe.feeds.parser.RSSFeedParser;
 import com.dgkris.rsspipe.feeds.types.FeedListener;
@@ -62,7 +62,7 @@ public class FeedExtractor extends Thread {
     }
 
     private void extract() {
-        logger.info("Feed extraction started");
+        logger.debug("Feed extraction started");
         RSSFeedParser rssFeedParser = new RSSFeedParser();
         HTMLParser htmlParser = new HTMLParser();
         DateTime latestPubDateForFeed = null;
@@ -71,38 +71,42 @@ public class FeedExtractor extends Thread {
         for (FeedSource feedSource : feedSources) {
             Feed feed = rssFeedParser.getFeedsFromUrl(feedSource);
             lastExtractedDateTime = feedSourceReader.getLastExtractedDateTimeForFeed(feed);
+            latestPubDateForFeed = lastExtractedDateTime;
+            logger.debug("Last extracted timestamp : {}", lastExtractedDateTime);
             for (FeedItem feedItem : feed.getFeedItems()) {
                 pubDate = Utils.convertToDateTime(feedItem.getPubDate());
+                logger.debug("Incoming feed published timestamp : {}", pubDate);
                 if (pubDate.isAfter(lastExtractedDateTime)) {
-                    latestPubDateForFeed = pubDate;
+                    logger.debug("{} after {} hence proceeding", pubDate, lastExtractedDateTime);
                     notifyAllListeners(htmlParser.getFeedPageFromUrl(feedItem.getLink(), feedItem));
-                    if (lastExtractedDateTime.isAfter(latestPubDateForFeed)) {
-                        latestPubDateForFeed = lastExtractedDateTime;
+                    if (pubDate.isAfter(latestPubDateForFeed)) {
+                        latestPubDateForFeed = pubDate;
                     }
                 }
             }
             if (latestPubDateForFeed != null) {
+                logger.debug("Updating last extracted timestamp for feed: {} to {}", feed.getFeedSource().getPublisherName(), latestPubDateForFeed.toString());
                 feedSourceReader.setLastExtractedDateTimeForFeed(feed,
                         lastExtractedDateTime.toString(), latestPubDateForFeed.toString());
             }
         }
-        logger.info("Feed extraction completed");
+        logger.debug("Feed extraction completed");
     }
 
     private void notifyAllListeners(FeedPage page) {
-        logger.info("New feed page received :: {}", page.getFeedItemLink());
+        logger.debug("New feed page received :: {}", page.getFeedItemLink());
         for (FeedListener listener : listeners) {
             listener.onNewPage(page);
         }
     }
 
     public void startThread() {
-        logger.info("Started feed extractor thread");
+        logger.debug("Started feed extractor thread");
         this.run();
     }
 
     public void shutdownThread() {
-        logger.info("Shutdown feed extractor thread");
+        logger.debug("Shutdown feed extractor thread");
         listeners.clear();
         if (keepRunning == false) {
             return;

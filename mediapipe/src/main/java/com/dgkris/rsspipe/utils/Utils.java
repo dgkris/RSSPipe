@@ -3,7 +3,6 @@ package com.dgkris.rsspipe.utils;
 import com.dgkris.rsspipe.feeds.models.FeedPage;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -78,13 +77,6 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static void main(String args[]) {
-        FeedPage page=new FeedPage();
-        page.setTimestampOfStorage("xyz");
-        System.out.println(Utils.getFieldValueInInstance(page, Utils.getFieldByName("timestampOfStorage",FeedPage.class)));
-
     }
 
 }

@@ -28,7 +28,7 @@ public class RSSPipeSource extends AbstractSource
 
     /**
      * The initialization method for the Source. The context contains all the
-     * Flume configuration info, and can be used to retrieve any configuration
+     * Flume configuration debug, and can be used to retrieve any configuration
      * values necessary to set up the Source.
      */
     @Override
@@ -45,7 +45,7 @@ public class RSSPipeSource extends AbstractSource
     public void start() {
         // The channel is the piece of Flume that sits between the Source and Sink,
         // and is used to process events.
-        logger.info("RSSPipeSource started");
+        logger.debug("RSSPipeSource started");
         extractor.registerListener(this);
         extractor.startThread();
         super.start();
@@ -56,7 +56,7 @@ public class RSSPipeSource extends AbstractSource
      */
     @Override
     public void stop() {
-        logger.info("RSSPipeSource stopped");
+        logger.debug("RSSPipeSource stopped");
         extractor.shutdownThread();
         super.stop();
     }
@@ -68,7 +68,7 @@ public class RSSPipeSource extends AbstractSource
 
     @Override
     public void onNewPage(FeedPage page) {
-        logger.info("RSSPipeSource new page received : {}", page.getFeedItemLink());
+        logger.debug("RSSPipeSource new page received : {}", page.getFeedItemLink());
         final ChannelProcessor channel = getChannelProcessor();
         Event event = EventBuilder.withBody(gson.toJson(page).getBytes());
         channel.processEvent(event);

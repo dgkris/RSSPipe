@@ -38,7 +38,7 @@ public class RSSFeedParser {
     }
 
     public Feed getFeedsFromUrl(FeedSource feedSource) {
-        logger.info("Extracting rss feed items from feed url : {} initiated", feedSource.getFeedUrl());
+        logger.debug("Extracting rss feed items from feed url : {} initiated", feedSource.getFeedUrl());
         String feedUrl = feedSource.getFeedUrl();
         Feed feed = null;
         try {
@@ -120,7 +120,7 @@ public class RSSFeedParser {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        logger.info("Extracting rss feed items from feed url : {} completed", feedSource.getFeedUrl());
+        logger.debug("Extracting rss feed items from feed url : {} completed", feedSource.getFeedUrl());
 
         return feed;
     }

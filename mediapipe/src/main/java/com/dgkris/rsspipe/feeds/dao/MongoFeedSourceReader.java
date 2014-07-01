@@ -22,7 +22,7 @@ public class MongoFeedSourceReader implements FeedSourceReader {
 
     @Override
     public List<FeedSource> getSourceFeeds() {
-        logger.info("Fetching feeds from Mongo::Started");
+        logger.debug("Fetching feeds from Mongo::Started");
         ArrayList<FeedSource> feedItems = new ArrayList<FeedSource>();
         MongoService mongoService = new MongoService();
         mongoService.openConnection("localhost", 27017, "MediapipeDB");
@@ -37,7 +37,7 @@ public class MongoFeedSourceReader implements FeedSourceReader {
             feedItems.add(feedListItem);
         }
         mongoService.closeConnection();
-        logger.info("Fetching feeds from Mongo::Completed");
+        logger.debug("Fetching feeds from Mongo::Completed");
         return feedItems;
     }
 
@@ -50,7 +50,7 @@ public class MongoFeedSourceReader implements FeedSourceReader {
         DBObject extractionStatus = mongoService.fetchDocumentsFromCollection("ExtractionStatus", basicDBObject).get(0);
         DateTime dateTime = Utils.convertToDateTime((String) extractionStatus.get("lastExtractedTs"));
         mongoService.closeConnection();
-        logger.info("Last extraction date for feed::{} => {}", feed.getFeedSource().getPublisherName(), dateTime.toString());
+        logger.debug("Last extraction date for feed::{} => {}", feed.getFeedSource().getPublisherName(), dateTime.toString());
         return dateTime;
     }
 
@@ -68,7 +68,7 @@ public class MongoFeedSourceReader implements FeedSourceReader {
         newDBObject.put("lastExtractedTs", newDateTime);
 
         mongoService.replaceDocumentInCollection("ExtractionStatus", queryObject, newDBObject);
-        logger.info("Updated last extraction date for feed::{} to {}", feed.getFeedSource().getPublisherName(), newDateTime.toString());
+        logger.debug("Updated last extraction date for feed::{} to {}", feed.getFeedSource().getPublisherName(), newDateTime.toString());
     }
 
 }
