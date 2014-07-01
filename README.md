@@ -16,6 +16,7 @@ db.ExtractionStatus.save({"publisherName" : "The Hindu", "lastExtractedTs" : <DA
 ```
 
 **Flume Configuration**
+
 Flume configuration is available in conf/flume.conf file
 
 RSSPipe.sinks.HBASE.serializer.columns contains all the available <rss_feed_component>:<hbase_column_name> mapping. You can modify the entries to your case.
